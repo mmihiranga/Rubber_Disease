@@ -19,15 +19,14 @@ modelLeaf = tf.keras.models.load_model(model_filenameLeaf)
 @app.route('/predictLeaf', methods=['POST'])
 def predictLeaf():
     # Check if the request contains the 'file' key in the JSON body
-    if 'file' not in request.json:
+    if 'file' not in request.files:
         return jsonify({'error': 'No file found in the request'})
 
-    # Get the image URL from the request JSON
-    image_url = request.json['file']
+    # Get the uploaded file from the request
+    file = request.files['file']
 
-    # Download the image
-    response = requests.get(image_url)
-    image = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR)
+    # Read the file into memory as a NumPy array
+    image = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
 
     # Preprocess the image
     image = cv2.resize(image, (224, 224))
@@ -55,16 +54,15 @@ def predictLeaf():
 
 @app.route('/predictTrunk', methods=['POST'])
 def predictTrunk():
-    # Check if the request contains the 'file' key in the JSON body
-    if 'file' not in request.json:
+    # Check if the request contains a file
+    if 'file' not in request.files:
         return jsonify({'error': 'No file found in the request'})
-
-    # Get the image URL from the request JSON
-    image_url = request.json['file']
-
-    # Download the image
-    response = requests.get(image_url)
-    image = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_COLOR)
+    
+    # Get the uploaded file from the request
+    file = request.files['file']
+    
+    # Read the file into memory as a NumPy array
+    image = cv2.imdecode(np.frombuffer(file.read(), np.uint8), cv2.IMREAD_COLOR)
 
     # Preprocess the image
     image = cv2.resize(image, (224, 224))
